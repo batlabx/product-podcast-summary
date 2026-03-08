@@ -42,12 +42,6 @@ def pick_transcript(force: bool = False) -> PickResult:
     today = datetime.now().strftime("%Y-%m-%d")
     state = load_state()
 
-    # Reuse today's pick unless --force was set
-    if not force:
-        for item in state.get("picked", []):
-            if item.get("date") == today:
-                return PickResult(file_name=item["file"], date=today)
-
     all_files = list_transcripts()
     picked_files = {item["file"] for item in state.get("picked", [])}
     remaining = [f for f in all_files if f not in picked_files]
@@ -88,8 +82,8 @@ def print_selection(result: PickResult) -> None:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Daily transcript picker")
-    parser.add_argument("--force", action="store_true", help="Force a new pick for today")
+    parser = argparse.ArgumentParser(description="Transcript picker (always picks a new one each run)")
+    parser.add_argument("--force", action="store_true", help="Deprecated: kept for backward compatibility")
     args = parser.parse_args()
 
     result = pick_transcript(force=args.force)

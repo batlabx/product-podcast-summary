@@ -13,3 +13,5 @@ Track of transcripts selected/summarized.
 | Date | Transcript | Status |
 |---|---|---|
 | 2026-03-07 | Adam Grenier.txt | Selected |
+| 2026-03-07 | Luc Levesque.txt | Selected |
+| 2026-03-07 | Matt Abrahams.txt | Selected |
