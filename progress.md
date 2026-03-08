@@ -16,3 +16,4 @@ Track of transcripts selected/summarized.
 | 2026-03-07 | Luc Levesque.txt | Selected |
 | 2026-03-07 | Matt Abrahams.txt | Selected |
 | 2026-03-07 | Jeffrey Pfeffer.txt | Selected |
+| 2026-03-07 | Jason Fried.txt | Selected |

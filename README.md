@@ -7,7 +7,7 @@ A daily automation project that:
 3. Prevents repeats until all transcripts are exhausted
 4. Updates `progress.md` automatically
 5. Generates a morning summary file in `summaries/`
-6. Uses a **local RAG-style retriever** (no API keys required)
+6. Generates a concise key-point summary from the selected transcript
 
 ---
 
@@ -43,29 +43,11 @@ bash run_daily.sh
 
 ---
 
-## 🧠 Local RAG Summary Mode (No API Keys)
-
-`summarize.py` now uses local retrieval over transcript chunks (TF-IDF style scoring) to generate structured sections:
-
-- TL;DR
-- Top Insights
-- Frameworks Mentioned
-- Action Items
-- Notable Quotes
-
-Everything runs fully local on your machine.
-
----
-
 ## ✅ No-Repeat Guarantee
 
 `picker.py` stores all prior picks in `state.json` and only chooses from remaining transcripts.
 
-If a pick already happened today, it reuses that pick (idempotent behavior) unless run with:
-
-```bash
-python3 picker.py --force
-```
+Each run picks a **new** transcript until the archive is exhausted.
 
 ---
 
