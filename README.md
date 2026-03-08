@@ -42,18 +42,6 @@ bash run_daily.sh
 
 ---
 
-## 🔁 Daily Schedule (7:30 AM)
-
-Install a cron job:
-
-```bash
-(crontab -l 2>/dev/null; echo "30 7 * * * cd /Users/batlab/.openclaw/workspace/product-podcast-summary && /bin/bash run_daily.sh >> daily.log 2>&1") | crontab -
-```
-
-This runs every day at **7:30 AM** and logs output to `daily.log`.
-
----
-
 ## ✅ No-Repeat Guarantee
 
 `picker.py` stores all prior picks in `state.json` and only chooses from remaining transcripts.
