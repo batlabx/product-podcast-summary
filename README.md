@@ -7,6 +7,7 @@ A daily automation project that:
 3. Prevents repeats until all transcripts are exhausted
 4. Updates `progress.md` automatically
 5. Generates a morning summary file in `summaries/`
+6. Uses a **local RAG-style retriever** (no API keys required)
 
 ---
 
@@ -39,6 +40,20 @@ Or run both together:
 ```bash
 bash run_daily.sh
 ```
+
+---
+
+## 🧠 Local RAG Summary Mode (No API Keys)
+
+`summarize.py` now uses local retrieval over transcript chunks (TF-IDF style scoring) to generate structured sections:
+
+- TL;DR
+- Top Insights
+- Frameworks Mentioned
+- Action Items
+- Notable Quotes
+
+Everything runs fully local on your machine.
 
 ---
 
