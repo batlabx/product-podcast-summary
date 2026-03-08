@@ -14,10 +14,10 @@ STATE_FILE = ROOT / "state.json"
 SUMMARY_DIR = ROOT / "summaries"
 
 STOPWORDS = {
-    "the","and","that","with","this","from","have","about","your","they","what","when","which",
-    "would","there","their","them","then","just","like","into","than","because","really","also",
-    "were","been","will","where","could","should","after","before","while","some","more","most",
-    "very","much","only","over","such","many","those","these","through","being","even","make",
+    "the", "and", "that", "with", "this", "from", "have", "about", "your", "they", "what", "when", "which",
+    "would", "there", "their", "them", "then", "just", "like", "into", "than", "because", "really", "also",
+    "were", "been", "will", "where", "could", "should", "after", "before", "while", "some", "more", "most",
+    "very", "much", "only", "over", "such", "many", "those", "these", "through", "being", "even", "make",
 }
 
 
@@ -34,16 +34,37 @@ def get_latest_selection_for_today() -> str:
     raise RuntimeError("No transcript selected for today.")
 
 
+def clean_sentence(sentence: str) -> str:
+    s = sentence.replace("\n", " ").strip()
+    # Remove speaker/timestamp patterns like: "Lenny (00:12:34):"
+    s = re.sub(r"\b[\w .'-]+\s*\(\d{2}:\d{2}:\d{2}\):\s*", "", s)
+    # Remove naked timestamp prefix like "(00:19:14):"
+    s = re.sub(r"^\(?\d{2}:\d{2}:\d{2}\)?\s*:\s*", "", s)
+    # Remove timestamp markers that survive in middle of sentences
+    s = re.sub(r"\(?\d{2}:\d{2}:\d{2}\)?\s*:\s*", "", s)
+    s = re.sub(r"\s+", " ", s).strip()
+    return s
+
+
+def is_noise(sentence: str) -> bool:
+    s = sentence.lower()
+    if "episode is brought to you" in s:
+        return True
+    if "reader-supported publication" in s:
+        return True
+    if len(s) < 60:
+        return True
+    return False
+
+
 def split_sentences(text: str) -> list[str]:
     parts = re.split(r"(?<=[.!?])\s+", text)
     out = []
     for p in parts:
-        s = p.strip().replace("\n", " ")
-        if len(s) < 60:
+        cleaned = clean_sentence(p)
+        if is_noise(cleaned):
             continue
-        if "episode is brought to you" in s.lower():
-            continue
-        out.append(s)
+        out.append(cleaned)
     return out
 
 
@@ -60,21 +81,25 @@ def summarize_text(text: str, n: int = 8) -> list[str]:
             continue
         freq[w] = freq.get(w, 0) + 1
 
-    top_words = {w for w, _ in sorted(freq.items(), key=lambda x: x[1], reverse=True)[:50]}
+    top_words = {w for w, _ in sorted(freq.items(), key=lambda x: x[1], reverse=True)[:60]}
     sentences = split_sentences(text)
     ranked = sorted(sentences, key=lambda s: sentence_score(s, top_words), reverse=True)
 
     selected: list[str] = []
-    seen = set()
+    seen_prefix = set()
     for s in ranked:
-        cleaned = re.sub(r"\s+", " ", s).strip()
-        key = cleaned[:120].lower()
-        if key in seen:
+        key = s[:120].lower()
+        if key in seen_prefix:
             continue
-        seen.add(key)
-        selected.append(cleaned)
+        seen_prefix.add(key)
+        selected.append(s)
         if len(selected) >= n:
             break
+
+    # Fallback: ensure we always return something
+    if not selected and sentences:
+        selected = sentences[: min(n, len(sentences))]
+
     return selected
 
 
